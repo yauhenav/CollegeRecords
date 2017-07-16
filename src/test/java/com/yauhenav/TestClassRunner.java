@@ -9,5 +9,7 @@ public class TestClassRunner
         Result result =
                 JUnitCore.runClasses(TestClass.class);
         System.out.println(result.getFailures());
+        result = JUnitCore.runClasses(TestMarkDto.class);
+        System.out.println(result.getFailures());
     }
 }
