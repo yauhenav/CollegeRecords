@@ -14,10 +14,12 @@ public class Service {
     private SubjectDao interDaoSub = null;
     private MarkDao interDaoMar = null;
 
+    String selectDataBase = "/daotrain.properties";
+
     // Constructor that establishes connection with the DB & creates required objects
     public Service() throws ServiceException {
         try {
-            interDaoFact = new MySqlDaoFactory ();
+            interDaoFact = new MySqlDaoFactory (selectDataBase);
             interDaoStud = interDaoFact.getStudentDao();
             interDaoSub = interDaoFact.getSubjectDao();
             interDaoMar = interDaoFact.getMarkDao();

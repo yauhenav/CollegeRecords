@@ -7,7 +7,7 @@ public class TestClassRunner
     public static void main(String[] args)
     {
         Result result =
-                JUnitCore.runClasses(TestClass.class);
+                JUnitCore.runClasses(TestClass.class, TestMarkDto.class);
         System.out.println(result.getFailures());
         result = JUnitCore.runClasses(TestMarkDto.class);
         System.out.println(result.getFailures());

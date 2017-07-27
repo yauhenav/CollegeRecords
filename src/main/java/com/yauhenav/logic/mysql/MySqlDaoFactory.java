@@ -11,12 +11,13 @@ public class MySqlDaoFactory implements DaoFactory {
 
     private Connection connection = null;
 
+
     // Constructor
-    public MySqlDaoFactory() throws DaoException {
+    public MySqlDaoFactory(String selectDataBase) throws DaoException {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Properties props = new Properties();
-            InputStream stream = this.getClass().getResourceAsStream("/config.properties");
+            InputStream stream = this.getClass().getResourceAsStream(selectDataBase);
             props.load(stream);
             this.connection =  DriverManager.getConnection(props.getProperty("url"), props.getProperty("user"), props.getProperty("password"));
         } catch (SQLException exc) {
