@@ -1,5 +1,7 @@
 package com.yauhenav.logic.mysql;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
 import java.util.*;
 
@@ -8,12 +10,12 @@ import com.yauhenav.logic.dto.*;
 import com.yauhenav.logic.exception.*;
 
 public class MySqlMarkDao implements MarkDao {
-    private final static String SQL_CREATE = "INSERT INTO daotrain.MARK (ID, VALUE, STUDENT_ID, SUBJECT_ID) VALUES (?, ?, ?, ?)";
-    private final static String SQL_READ = "SELECT VALUE, STUDENT_ID, SUBJECT_ID FROM daotrain.MARK WHERE ID = ?";
-    private final static String SQL_UPDATE = "UPDATE daotrain.MARK SET VALUE = ?, STUDENT_ID = ?, SUBJECT_ID = ? WHERE ID = ?";
-    private final static String SQL_DELETE = "DELETE FROM daotrain.MARK WHERE ID = ?";
-    private final static String SQL_GETALL = "SELECT ID, VALUE, STUDENT_ID, SUBJECT_ID FROM daotrain.MARK";
-    private final static String SQL_GETALL_ONE_STUDENT = "SELECT ID, VALUE, SUBJECT_ID FROM daotrain.MARK WHERE STUDENT_ID = ?";
+    private String SQL_CREATE_MARK = null;
+    private String SQL_READ_MARK = null;
+    private String SQL_UPDATE_MARK = null;
+    private String SQL_DELETE_MARK = null;
+    private String SQL_GETALL_MARK = null;
+    private String SQL_GETALL_ONE_STUDENT_MARK = null;
 
     private PreparedStatement psCreateMark = null;
     private PreparedStatement psReadMark = null;
@@ -23,16 +25,29 @@ public class MySqlMarkDao implements MarkDao {
     private PreparedStatement psGetAllMarkOneStud = null;
 
     // Constructor
-    public MySqlMarkDao(Connection connection) throws DaoException {
+    public MySqlMarkDao(Connection connection, String selectDataBase) throws DaoException {
         try {
-            psCreateMark = connection.prepareStatement(SQL_CREATE);
-            psReadMark = connection.prepareStatement(SQL_READ);
-            psUpdMark = connection.prepareStatement(SQL_UPDATE);
-            psDelMark = connection.prepareStatement(SQL_DELETE);
-            psGetAllMark = connection.prepareStatement(SQL_GETALL);
-            psGetAllMarkOneStud = connection.prepareStatement(SQL_GETALL_ONE_STUDENT);
+            Properties props = new Properties();
+            InputStream stream = this.getClass().getResourceAsStream(selectDataBase);
+            props.load(stream);
+
+            this.SQL_CREATE_MARK = props.getProperty("SQL_CREATE_MARK");
+            this.SQL_READ_MARK = props.getProperty("SQL_READ_MARK");
+            this.SQL_UPDATE_MARK = props.getProperty("SQL_UPDATE_MARK");
+            this.SQL_DELETE_MARK = props.getProperty("SQL_DELETE_MARK");
+            this.SQL_GETALL_MARK = props.getProperty("SQL_GETALL_MARK");
+            this.SQL_GETALL_ONE_STUDENT_MARK = props.getProperty("SQL_GETALL_ONE_STUDENT_MARK");
+
+            psCreateMark = connection.prepareStatement(SQL_CREATE_MARK);
+            psReadMark = connection.prepareStatement(SQL_READ_MARK);
+            psUpdMark = connection.prepareStatement(SQL_UPDATE_MARK);
+            psDelMark = connection.prepareStatement(SQL_DELETE_MARK);
+            psGetAllMark = connection.prepareStatement(SQL_GETALL_MARK);
+            psGetAllMarkOneStud = connection.prepareStatement(SQL_GETALL_ONE_STUDENT_MARK);
         } catch (SQLException exc) {
             throw new DaoException ("Exception for DAO", exc);
+        } catch (IOException exc) {
+            exc.printStackTrace();
         }
     }
 

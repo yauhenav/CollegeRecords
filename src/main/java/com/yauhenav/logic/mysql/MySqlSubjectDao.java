@@ -1,5 +1,7 @@
 package com.yauhenav.logic.mysql;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
 import java.util.*;
 
@@ -9,11 +11,11 @@ import com.yauhenav.logic.exception.*;
 
 public class MySqlSubjectDao implements SubjectDao {
 
-    private final static String SQL_CREATE = "INSERT INTO daotrain.SUBJECT (ID, DESCRIPTION) VALUES (?, ?)";
-    private final static String SQL_READ = "SELECT ID, DESCRIPTION FROM daotrain.SUBJECT WHERE ID = ?";
-    private final static String SQL_UPDATE = "UPDATE daotrain.SUBJECT SET DESCRIPTION = ? WHERE ID = ?";
-    private final static String SQL_DELETE = "DELETE FROM daotrain.SUBJECT WHERE ID = ?";
-    private final static String SQL_GETALL = "SELECT ID, DESCRIPTION FROM daotrain.SUBJECT";
+    private String SQL_CREATE_SUBJ = null;
+    private String SQL_READ_SUBJ = null;
+    private String SQL_UPDATE_SUBJ = null;
+    private String SQL_DELETE_SUBJ = null;
+    private String SQL_GETALL_SUBJ = null;
 
     private PreparedStatement psCreateSubj = null;
     private PreparedStatement psReadSubj = null;
@@ -22,15 +24,27 @@ public class MySqlSubjectDao implements SubjectDao {
     private PreparedStatement psGetAllSubj = null;
 
     // Constructor
-    public MySqlSubjectDao(Connection connection) throws DaoException {
+    public MySqlSubjectDao(Connection connection, String selectDataBase) throws DaoException {
         try {
-            psCreateSubj = connection.prepareStatement(SQL_CREATE);
-            psReadSubj = connection.prepareStatement(SQL_READ);
-            psUpdSubj = connection.prepareStatement(SQL_UPDATE);
-            psDelSubj = connection.prepareStatement(SQL_DELETE);
-            psGetAllSubj = connection.prepareStatement (SQL_GETALL);
+            Properties props = new Properties();
+            InputStream stream = this.getClass().getResourceAsStream(selectDataBase);
+            props.load(stream);
+
+            this.SQL_CREATE_SUBJ = props.getProperty("SQL_CREATE_SUBJ");
+            this.SQL_READ_SUBJ = props.getProperty("SQL_READ_SUBJ");
+            this.SQL_UPDATE_SUBJ = props.getProperty("SQL_UPDATE_SUBJ");
+            this.SQL_DELETE_SUBJ = props.getProperty("SQL_DELETE_SUBJ");
+            this.SQL_GETALL_SUBJ = props.getProperty("SQL_GETALL_SUBJ");
+
+            psCreateSubj = connection.prepareStatement(SQL_CREATE_SUBJ);
+            psReadSubj = connection.prepareStatement(SQL_READ_SUBJ);
+            psUpdSubj = connection.prepareStatement(SQL_UPDATE_SUBJ);
+            psDelSubj = connection.prepareStatement(SQL_DELETE_SUBJ);
+            psGetAllSubj = connection.prepareStatement (SQL_GETALL_SUBJ);
         } catch (SQLException exc) {
             throw new DaoException ("Exception for DAO", exc);
+        } catch (IOException exc) {
+            exc.printStackTrace();
         }
     }
 

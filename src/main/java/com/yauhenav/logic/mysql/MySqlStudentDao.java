@@ -1,5 +1,7 @@
 package com.yauhenav.logic.mysql;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
 import java.util.*;
 
@@ -8,11 +10,11 @@ import com.yauhenav.logic.dto.*;
 import com.yauhenav.logic.exception.*;
 
 public class MySqlStudentDao implements StudentDao {
-    private final static String SQL_CREATE = "INSERT INTO daotrain.STUDENT (ID, NAME, SURNAME) VALUES (?, ?, ?)";
-    private final static String SQL_READ = "SELECT ID, NAME, SURNAME FROM daotrain.STUDENT WHERE ID = ?";
-    private final static String SQL_UPDATE = "UPDATE daotrain.STUDENT SET NAME = ?, SURNAME = ? WHERE ID = ?";
-    private final static String SQL_DELETE = "DELETE FROM daotrain.STUDENT WHERE ID = ?";
-    private final static String SQL_GETALL = "SELECT ID, NAME, SURNAME FROM daotrain.STUDENT";
+    private String SQL_CREATE_STUD = null;
+    private String SQL_READ_STUD = null;
+    private String SQL_UPDATE_STUD = null;
+    private String SQL_DELETE_STUD = null;
+    private String SQL_GETALL_STUD = null;
 
     private PreparedStatement psCreateStud = null;
     private PreparedStatement psReadStud = null;
@@ -21,15 +23,27 @@ public class MySqlStudentDao implements StudentDao {
     private PreparedStatement psGetAllStud = null;
 
     // Constructor
-    public MySqlStudentDao(Connection connection) throws DaoException {
+    public MySqlStudentDao(Connection connection, String selectDataBase) throws DaoException {
         try {
-            psCreateStud = connection.prepareStatement(SQL_CREATE);
-            psReadStud = connection.prepareStatement(SQL_READ);
-            psUpdStud = connection.prepareStatement(SQL_UPDATE);
-            psDelStud = connection.prepareStatement(SQL_DELETE);
-            psGetAllStud = connection.prepareStatement(SQL_GETALL);
+            Properties props = new Properties();
+            InputStream stream = this.getClass().getResourceAsStream(selectDataBase);
+            props.load(stream);
+
+            this.SQL_CREATE_STUD = props.getProperty("SQL_CREATE_STUD");
+            this.SQL_READ_STUD = props.getProperty("SQL_READ_STUD");
+            this.SQL_UPDATE_STUD = props.getProperty("SQL_UPDATE_STUD");
+            this.SQL_DELETE_STUD = props.getProperty("SQL_DELETE_STUD");
+            this.SQL_GETALL_STUD = props.getProperty("SQL_GETALL_STUD");
+
+            psCreateStud = connection.prepareStatement(SQL_CREATE_STUD);
+            psReadStud = connection.prepareStatement(SQL_READ_STUD);
+            psUpdStud = connection.prepareStatement(SQL_UPDATE_STUD);
+            psDelStud = connection.prepareStatement(SQL_DELETE_STUD);
+            psGetAllStud = connection.prepareStatement(SQL_GETALL_STUD);
         } catch (SQLException exc) {
             throw new DaoException ("Exception for DAO");
+        } catch (IOException exc) {
+            exc.printStackTrace();
         }
     }
 

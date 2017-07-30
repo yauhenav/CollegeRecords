@@ -10,6 +10,7 @@ import com.yauhenav.logic.exception.*;
 public class MySqlDaoFactory implements DaoFactory {
 
     private Connection connection = null;
+    private String selectDataBase = null;
 
 
     // Constructor
@@ -17,6 +18,7 @@ public class MySqlDaoFactory implements DaoFactory {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Properties props = new Properties();
+            this.selectDataBase = selectDataBase;
             InputStream stream = this.getClass().getResourceAsStream(selectDataBase);
             props.load(stream);
             this.connection =  DriverManager.getConnection(props.getProperty("url"), props.getProperty("user"), props.getProperty("password"));
@@ -29,17 +31,17 @@ public class MySqlDaoFactory implements DaoFactory {
 
     @Override
     public StudentDao getStudentDao() throws DaoException {
-        return new MySqlStudentDao(connection);
+        return new MySqlStudentDao(connection, selectDataBase);
     }
 
     @Override
     public SubjectDao getSubjectDao() throws DaoException {
-        return new MySqlSubjectDao(connection);
+        return new MySqlSubjectDao(connection, selectDataBase);
     }
 
     @Override
     public MarkDao getMarkDao() throws DaoException {
-        return new MySqlMarkDao(connection);
+        return new MySqlMarkDao(connection, selectDataBase);
     }
 
     // Close Connection instance object
