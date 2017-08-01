@@ -9,7 +9,7 @@ import com.yauhenav.logic.exception.*;
 
 public class MySqlDaoFactory implements DaoFactory {
 
-    private Connection connection = null;
+    public Connection connection = null;
     private String selectDataBase = null;
 
 
