@@ -3,6 +3,8 @@ package com.yauhenav;
 import static org.junit.Assert.*;
 
 import org.junit.After;
+import org.junit.BeforeClass;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,18 +19,19 @@ import java.sql.*;
  */
 public class TestMySqlStudentDao {
 
-    public Connection connection;
-    String pathDB = "/testDataBase.properties";
-    MySqlStudentDao testMSSD;
+    private static Connection connection;
+    private static String pathDB = "/testDataBase.properties";
+    private static MySqlStudentDao testMSSD;
+    private static PreparedStatement psEmpty = null;
+    private static PreparedStatement psPopulate = null;
 
-    @Before
-    public void connectToDataBase() throws SQLException, DaoException {
+    @BeforeClass
+    public static void createPsAndConnection() throws SQLException, DaoException {
         try {
             MySqlDaoFactory testMSDF = new MySqlDaoFactory(pathDB);
             connection = testMSDF.connection;
             testMSSD = new MySqlStudentDao(connection, pathDB);
-
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO `STUDENT` (`ID`,`NAME`,`SURNAME`)"+
+            psPopulate = connection.prepareStatement("INSERT INTO `STUDENT` (`ID`,`NAME`,`SURNAME`)"+
                     "VALUES (1,'BILL','CLINTON');" +
                     "INSERT INTO `SUBJECT` (`ID`,`DESCRIPTION`) VALUES (1,'MATHEMATICS');" +
                     "INSERT INTO `SUBJECT` (`ID`,`DESCRIPTION`) VALUES (2,'LITERATURE');" +
@@ -42,20 +45,37 @@ public class TestMySqlStudentDao {
                     "INSERT INTO `MARK` (`ID`,`VALUE`,`STUDENT_ID`,`SUBJECT_ID`) VALUES (4,7,1,4);" +
                     "INSERT INTO `MARK` (`ID`,`VALUE`,`STUDENT_ID`,`SUBJECT_ID`) VALUES (5,6,1,5);" +
                     "INSERT INTO `MARK` (`ID`,`VALUE`,`STUDENT_ID`,`SUBJECT_ID`) VALUES (6,5,1,6);");
-            ps.executeUpdate();
+            psEmpty = connection.prepareStatement("DELETE FROM `testDataBase`.`STUDENT`;" +
+                    "DELETE FROM `testDataBase`.`SUBJECT`; DELETE FROM `testDataBase`.`MARK`;");
+        } catch (SQLException | DaoException exc) {
+            exc.printStackTrace();
+        }
+    }
 
-        } catch (DaoException exc) {
+    @Before
+    public void populateDataBase() throws SQLException {
+        try {
+            psPopulate.executeUpdate();
+        } catch (SQLException exc) {
             exc.printStackTrace();
         }
     }
 
     @After
-    public void closeConnection() throws SQLException {
+    public void emptyDataBase() throws SQLException {
         try {
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM `testDataBase`.`STUDENT`;" +
-                    "DELETE FROM `testDataBase`.`SUBJECT`; DELETE FROM `testDataBase`.`MARK`;");
-            ps.executeUpdate();
 
+            psEmpty.executeUpdate();
+        } catch (SQLException exc) {
+            exc.printStackTrace();
+        }
+    }
+
+    @AfterClass
+    public static void closePSandConnection() throws SQLException {
+        try {
+            psEmpty.close();
+            psPopulate.close();
             connection.close();
         } catch (SQLException exc) {
             exc.printStackTrace();
