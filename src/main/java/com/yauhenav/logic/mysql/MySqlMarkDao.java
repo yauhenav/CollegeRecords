@@ -208,7 +208,7 @@ public class MySqlMarkDao implements MarkDao {
             try {
                 this.closePs(psReadMark);
             } catch (DaoException e) {
-                exc.printStackTrace();
+                exc = e;
             }
             try {
                 this.closePs(psUpdMark);

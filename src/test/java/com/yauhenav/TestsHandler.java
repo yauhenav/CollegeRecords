@@ -43,29 +43,66 @@ public class TestsHandler {
         }
     }
 
-    public void populateDataBase() throws SQLException {
+    public void populateDataBase() throws DaoException {
         try {
             psPopulate.executeUpdate();
         } catch (SQLException exc) {
-            exc.printStackTrace();
+            throw new DaoException ("Exception for DAO", exc);
         }
     }
 
-    public void emptyDataBase() throws SQLException {
+    public void emptyDataBase() throws DaoException {
         try {
             psEmpty.executeUpdate();
         } catch (SQLException exc) {
-            exc.printStackTrace();
+            throw new DaoException ("Exception for DAO", exc);
         }
     }
 
-    public void closePSandConnection() throws SQLException {
+    // Terminate 'PreparedStatement' object received as an argument
+    private void closePs(PreparedStatement dummyPs) throws DaoException {
+        if (dummyPs != null) {
+            try {
+                dummyPs.close();
+                //throw new SQLException(); // Uncomment this line to test exception handling
+            } catch (SQLException exc) {
+                throw new DaoException("Exception for Dao", exc);
+            }
+        } else {
+            System.err.println ("PS statement was not created");
+        }
+    }
+
+    public void closePS() throws DaoException {
+        DaoException exc = null;
         try {
-            psEmpty.close();
-            psPopulate.close();
-            connection.close();
-        } catch (SQLException exc) {
-            exc.printStackTrace();
+            try {
+                this.closePs(psEmpty);
+            } catch (DaoException e) {
+                exc = e;
+            }
+            try {
+                this.closePs(psPopulate);
+            } catch (DaoException e) {
+                exc = e;
+            }
+        } finally {
+            if (exc != null) {
+                throw exc;
+            }
+        }
+    }
+
+    // Close Connection instance object
+    public void closeConnection () throws DaoException {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException exc) {
+                throw new DaoException("Exception for DAO", exc);
+            }
+        } else {
+            System.err.println("Connection was not established");
         }
     }
 }

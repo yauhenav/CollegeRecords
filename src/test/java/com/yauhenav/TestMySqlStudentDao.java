@@ -35,11 +35,12 @@ public class TestMySqlStudentDao {
     }
 
     @After
-    public void emptyDataBase() throws SQLException {
+    public void emptyDataBase() throws DaoException {
         try {
             testHandler.emptyDataBase();
-            testHandler.closePSandConnection();
-        } catch (SQLException exc) {
+            testHandler.closePS();
+            testHandler.closeConnection();
+        } catch (DaoException exc) {
             exc.printStackTrace();
         }
     }
