@@ -9,7 +9,7 @@ import com.yauhenav.logic.exception.*;
 
 public class MySqlDaoFactory implements DaoFactory {
 
-    public Connection connection = null;
+    private Connection connection = null;
     private String selectDataBase = null;
 
 
@@ -27,6 +27,10 @@ public class MySqlDaoFactory implements DaoFactory {
         } catch (IOException | ClassNotFoundException exc) {
             exc.printStackTrace();
         }
+    }
+
+    public Connection getConnection() {
+        return connection;
     }
 
     @Override
