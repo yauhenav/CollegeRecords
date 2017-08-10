@@ -50,6 +50,10 @@ public class TestsHandler {
 
     public void emptyDataBase() throws SQLException, DaoException {
         this.executeEmptyDataBasePS();
+        this.close();
+    }
+
+    public void close() throws SQLException, DaoException {
         this.closeAllPS();
         this.closeConnection();
     }
