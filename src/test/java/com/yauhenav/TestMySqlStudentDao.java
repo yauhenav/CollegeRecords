@@ -24,9 +24,8 @@ public class TestMySqlStudentDao {
    }
 
     @Before
-    public void populateDataBase() throws SQLException, DaoException {
+    public void fillDBWithTestData() throws SQLException, DaoException {
         try {
-            testHandler.getConnectionAndPS();
             testHandler.populateDataBase();
             testMSSD = testHandler.getMySqlStudentDao();
         } catch (SQLException | DaoException exc) {
@@ -35,11 +34,9 @@ public class TestMySqlStudentDao {
     }
 
     @After
-    public void emptyDataBase() throws DaoException {
+    public void wipeDBTestData() throws SQLException, DaoException {
         try {
             testHandler.emptyDataBase();
-            testHandler.closePS();
-            testHandler.closeConnection();
         } catch (DaoException exc) {
             exc.printStackTrace();
         }

@@ -17,7 +17,7 @@ public class TestsHandler {
         return testMSSD;
     }
 
-    public void getConnectionAndPS() throws SQLException, DaoException {
+    private void getConnectionAndPS() throws SQLException, DaoException {
         try {
             MySqlDaoFactory testMSDF = new MySqlDaoFactory(pathDB);
             connection = testMSDF.getConnection();
@@ -43,7 +43,18 @@ public class TestsHandler {
         }
     }
 
-    public void populateDataBase() throws DaoException {
+    public void populateDataBase() throws SQLException, DaoException {
+        this.getConnectionAndPS();
+        this.executePopulateDataBasePS();
+    }
+
+    public void emptyDataBase() throws SQLException, DaoException {
+        this.executeEmptyDataBasePS();
+        this.closeAllPS();
+        this.closeConnection();
+    }
+
+    private void executePopulateDataBasePS() throws DaoException {
         try {
             psPopulate.executeUpdate();
         } catch (SQLException exc) {
@@ -51,7 +62,7 @@ public class TestsHandler {
         }
     }
 
-    public void emptyDataBase() throws DaoException {
+    private void executeEmptyDataBasePS() throws DaoException {
         try {
             psEmpty.executeUpdate();
         } catch (SQLException exc) {
@@ -60,7 +71,7 @@ public class TestsHandler {
     }
 
     // Terminate 'PreparedStatement' object received as an argument
-    private void closePs(PreparedStatement dummyPs) throws DaoException {
+    private void closeSinglePS(PreparedStatement dummyPs) throws DaoException {
         if (dummyPs != null) {
             try {
                 dummyPs.close();
@@ -73,16 +84,16 @@ public class TestsHandler {
         }
     }
 
-    public void closePS() throws DaoException {
+    private void closeAllPS() throws DaoException {
         DaoException exc = null;
         try {
             try {
-                this.closePs(psEmpty);
+                this.closeSinglePS(psEmpty);
             } catch (DaoException e) {
                 exc = e;
             }
             try {
-                this.closePs(psPopulate);
+                this.closeSinglePS(psPopulate);
             } catch (DaoException e) {
                 exc = e;
             }
@@ -94,7 +105,7 @@ public class TestsHandler {
     }
 
     // Close Connection instance object
-    public void closeConnection () throws DaoException {
+    private void closeConnection () throws DaoException {
         if (connection != null) {
             try {
                 connection.close();
