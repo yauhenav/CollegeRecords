@@ -37,6 +37,7 @@ public class TestMySqlStudentDao {
     public void wipeDBTestData() throws SQLException, DaoException {
         try {
             testHandler.emptyDataBase();
+            testHandler.close();
         } catch (DaoException exc) {
             exc.printStackTrace();
         }
