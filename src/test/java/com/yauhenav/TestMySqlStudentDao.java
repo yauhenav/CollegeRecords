@@ -54,4 +54,11 @@ public class TestMySqlStudentDao {
             exc.printStackTrace();
         }
     }
+
+    @Test
+    public void TestReadStudentMethod () throws SQLException, DaoException {
+       try {
+
+       }
+    }
 }
