@@ -13,14 +13,10 @@ public class TestsHandler {
     private PreparedStatement psEmpty = null;
     private PreparedStatement psPopulate = null;
 
-    public MySqlStudentDao getMySqlStudentDao() {
-        return testMSSD;
-    }
-
-    private void getConnectionAndPS() throws SQLException, DaoException {
+    public TestsHandler() throws DaoException {
         try {
             MySqlDaoFactory testMSDF = new MySqlDaoFactory(pathDB);
-            connection = testMSDF.getConnection();
+            this.connection = testMSDF.getConnection();
             testMSSD = new MySqlStudentDao(connection, pathDB);
             psPopulate = connection.prepareStatement("INSERT INTO `STUDENT` (`ID`,`NAME`,`SURNAME`)" +
                     "VALUES (1,'BILL','CLINTON');" +
@@ -43,21 +39,11 @@ public class TestsHandler {
         }
     }
 
+    public MySqlStudentDao getMySqlStudentDaoInstance() {
+        return testMSSD;
+    }
+
     public void populateDataBase() throws SQLException, DaoException {
-        this.getConnectionAndPS();
-        this.executePopulateDataBasePS();
-    }
-
-    public void emptyDataBase() throws SQLException, DaoException {
-        this.executeEmptyDataBasePS();
-    }
-
-    public void close() throws SQLException, DaoException {
-        this.closeAllPS();
-        this.closeConnection();
-    }
-
-    private void executePopulateDataBasePS() throws DaoException {
         try {
             psPopulate.executeUpdate();
         } catch (SQLException exc) {
@@ -65,11 +51,19 @@ public class TestsHandler {
         }
     }
 
-    private void executeEmptyDataBasePS() throws DaoException {
+    public void emptyDataBase() throws SQLException, DaoException {
         try {
             psEmpty.executeUpdate();
         } catch (SQLException exc) {
             throw new DaoException ("Exception for DAO", exc);
+        }
+    }
+
+    public void close() throws SQLException, DaoException {
+        try {
+            this.closeAllPS();
+        } finally {
+            this.closeConnection();
         }
     }
 

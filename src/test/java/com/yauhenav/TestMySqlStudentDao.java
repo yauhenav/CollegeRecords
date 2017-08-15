@@ -19,15 +19,12 @@ public class TestMySqlStudentDao {
    private TestsHandler testHandler;
    private MySqlStudentDao testMSSD;
 
-   public TestMySqlStudentDao() throws SQLException, DaoException {
-       testHandler = new TestsHandler();
-   }
-
     @Before
     public void fillDBWithTestData() throws SQLException, DaoException {
         try {
+            testHandler = new TestsHandler();
             testHandler.populateDataBase();
-            testMSSD = testHandler.getMySqlStudentDao();
+            testMSSD = testHandler.getMySqlStudentDaoInstance();
         } catch (SQLException | DaoException exc) {
             exc.printStackTrace();
         }
@@ -54,11 +51,23 @@ public class TestMySqlStudentDao {
             exc.printStackTrace();
         }
     }
-
+/*
     @Test
     public void TestReadStudentMethod () throws SQLException, DaoException {
        try {
+           PreparedStatement ps = connection.prepareStatement("SELECT ID, NAME, SURNAME FROM testDataBase.STUDENT WHERE ID = ?");
+           ps.setInt(1, testStudentPush.getId());
+           ResultSet rs = ps.executeQuery();
+           Student testStudentPop = new Student(0, null, null);
+           rs.next();
+           testStudentPop.setId(rs.getInt("ID"));
+           testStudentPop.setName(rs.getString("NAME"));
+           testStudentPop.setSurname(rs.getString("SURNAME"));
 
+           assertEquals (testStudentPush.toString(), testStudentPop.toString());
+       } catch (DaoException exc) {
+           exc.printStackTrace();
        }
-    }
+       }
+    }*/
 }
